@@ -11,21 +11,37 @@ void main() {
   ));
 }
 
-Stream<String> getTime() => Stream.periodic(
-      const Duration(seconds: 1),
-      (_) => DateTime.now().toIso8601String(),
-    );
+// Stream<String> getTime() => Stream.periodic(
+//       const Duration(seconds: 1),
+//       (_) => DateTime.now().toIso8601String(),
+//     );
 
 class HomePage extends HookWidget {
   HomePage({Key? key}) : super(key: key);
 
-  final dateTime = useStream(getTime());
-
   @override
   Widget build(BuildContext context) {
+    final controller = useTextEditingController();
+    final text = useState('');
+    useEffect(() {
+      controller.addListener(() {
+        text.value = controller.text;
+      });
+      return null;
+    }, [controller]);
+    // final dateTime = useStream(getTime());
     return Scaffold(
-        appBar: AppBar(
-      title: Text(dateTime.data ?? 'Home Page'),
-    ));
+      appBar: AppBar(
+        title: Text('Home Page'),
+      ),
+      body: Column(
+        children: [
+          TextField(
+            controller: controller,
+          ),
+          Text('You typed ${text.value}')
+        ],
+      ),
+    );
   }
 }
